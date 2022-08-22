@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "potmeetkettle",
+  "version": "${version}",
+  "name": "Pot Meet Kettle",
+  "description": "Pot, meet Kettle! Make your own teas and drinks!",
+  "authors": [
+    "Kekie6",
+    "Shrimp",
+    "CodexAdrian",
+    "ThatGravityBoat"
+  ],
+  "contact": {
+    "website": "https://terrarium.earth/discord",
+    "repo": "https://github.com/terrarium-earth/Pot-Meet-Kettle",
+    "issues": "https://github.com/terrarium-earth/Pot-Meet-Kettle/issues"
+  },
+  "license": "All-Rights-Reserved",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "earth.terrarium.potmeetkettle.fabric.PotMeetKettleFabric"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.9",
+    "minecraft": ">=1.19.2"
+  }
+}
