@@ -24,10 +24,32 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version"              , project.version
+    inputs.property "minecraft_version"    , rootProject.minecraft_version
+    inputs.property "fabric_loader_version", rootProject.fabric_loader_version
+    inputs.property "fabric_api_version"   , rootProject.fabric_api_version
+    inputs.property "mod_id"               , rootProject.mod_id
+    inputs.property "mod_name"             , rootProject.mod_name
+    inputs.property "mod_description"      , rootProject.mod_description
+    inputs.property "mod_authors"          , rootProject.mod_authors.split(", ").toArrayString()
+    inputs.property "mod_display_url"      , rootProject.mod_display_url
+    inputs.property "mod_issue_tracker_url", rootProject.mod_issue_tracker_url
+    inputs.property "mod_repo_url"         , rootProject.mod_repo_url
+    inputs.property "mod_license"          , rootProject.mod_license
 
     filesMatching("fabric.mod.json") {
-        expand "version": project.version
+        expand "version"              : inputs.version              .get()
+        expand "mod_id"               : inputs.mod_id               .get()
+        expand "mod_name"             : inputs.mod_name             .get()
+        expand "mod_description"      : inputs.mod_description      .get()
+        expand "mod_authors"          : inputs.mod_authors          .get()
+        expand "mod_display_url"      : inputs.mod_display_url      .get()
+        expand "mod_issue_tracker_url": inputs.mod_issue_tracker_url.get()
+        expand "mod_repo_url"         : inputs.mod_repo_url         .get()
+        expand "minecraft_version"    : inputs.minecraft_version    .get()
+        expand "fabric_loader_version": inputs.fabric_loader_version.get()
+        expand "fabric_api_version"   : inputs.fabric_api_version   .get()
+        expand "mod_license"          : inputs.mod_license          .get()
     }
 }
 

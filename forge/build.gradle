@@ -15,17 +15,37 @@ configurations {
 }
 
 dependencies {
-    forge "net.minecraftforge:forge:${rootProject.forge_version}"
+    forge "net.minecraftforge:forge:${rootProject.forge_api_version}"
 
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version"              , project.version
+    inputs.property "minecraft_version"    , rootProject.minecraft_version
+    inputs.property "forge_loader_version" , rootProject.forge_loader_version.split("-")[1].split("\\.")[0]
+    inputs.property "forge_api_version"    , rootProject.forge_api_version.split("-")[1].split("\\.")[0]
+    inputs.property "mod_id"               , rootProject.mod_id
+    inputs.property "mod_name"             , rootProject.mod_name
+    inputs.property "mod_description"      , rootProject.mod_description
+    inputs.property "mod_authors"          , rootProject.mod_authors
+    inputs.property "mod_display_url"      , rootProject.mod_display_url
+    inputs.property "mod_issue_tracker_url", rootProject.mod_issue_tracker_url
+    inputs.property "mod_license"          , rootProject.mod_license
 
     filesMatching("META-INF/mods.toml") {
-        expand "version": project.version
+        expand "version"              : inputs.version              .get()
+        expand "minecraft_version"    : inputs.minecraft_version    .get()
+        expand "forge_loader_version" : inputs.forge_loader_version .get()
+        expand "forge_api_version"    : inputs.forge_api_version    .get()
+        expand "mod_id"               : inputs.mod_id               .get()
+        expand "mod_name"             : inputs.mod_name             .get()
+        expand "mod_description"      : rootProject.description     .get()
+        expand "mod_authors"          : inputs.mod_authors          .get()
+        expand "mod_display_url"      : inputs.mod_display_url      .get()
+        expand "mod_issue_tracker_url": inputs.mod_issue_tracker_url.get()
+        expand "mod_license"          : inputs.mod_license          .get()
     }
 }
 
