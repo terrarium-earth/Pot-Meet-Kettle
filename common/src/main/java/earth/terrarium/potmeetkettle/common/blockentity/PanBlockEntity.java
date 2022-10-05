@@ -8,6 +8,6 @@ import net.minecraft.world.level.block.state.BlockState;
 public class PanBlockEntity extends CookingVesselBlockEntityBase {
 
     public PanBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(PMKBlockEntities.PAN.get(), blockPos, blockState, 3, 1);
+        super(PMKBlockEntities.PAN.get(), blockPos, blockState, 2, 0);
     }
 }

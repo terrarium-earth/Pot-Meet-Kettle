@@ -11,6 +11,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class PotBlockEntity extends CookingVesselBlockEntityBase {
 
     public PotBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(PMKBlockEntities.POT.get(), blockPos, blockState, 3, 1);
+        super(PMKBlockEntities.POT.get(), blockPos, blockState, 4, 1);
     }
 }
