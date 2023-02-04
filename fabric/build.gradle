@@ -34,7 +34,7 @@ processResources {
     inputs.property "mod_id"               , rootProject.mod_id
     inputs.property "mod_name"             , rootProject.mod_name
     inputs.property "mod_description"      , rootProject.mod_description
-    inputs.property "mod_authors"          , rootProject.mod_authors.split(", ").toArrayString()
+    inputs.property "mod_authors"          , rootProject.mod_authors.tokenize(/, */).join(',')
     inputs.property "mod_display_url"      , rootProject.mod_display_url
     inputs.property "mod_issue_tracker_url", rootProject.mod_issue_tracker_url
     inputs.property "mod_repo_url"         , rootProject.mod_repo_url
@@ -62,7 +62,7 @@ shadowJar {
 }
 
 remapJar {
-    input.set shadowJar.archiveFile
+    inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null
 }
@@ -87,6 +87,10 @@ publishing {
     publications {
         mavenFabric(MavenPublication) {
             artifactId = rootProject.archives_base_name + "-" + project.name
+
+            artifact remapJar
+            artifact(sourcesJar) { builtBy remapSourcesJar }
+
             from components.java
         }
     }
@@ -95,4 +99,11 @@ publishing {
     repositories {
         // Add repositories to publish to here.
     }
+}
+
+loom.disableDeprecatedPomGeneration(publishing.publications.mavenFabric as MavenPublication)
+
+signing {
+    // See https://docs.gradle.org/current/userguide/signing_plugin.html for information on how to set up signing.
+    sign publishing.publications.mavenFabric
 }
