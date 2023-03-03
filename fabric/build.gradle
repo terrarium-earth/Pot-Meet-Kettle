@@ -27,7 +27,7 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version"              , project.version
+    inputs.property "mod_version"          , project.mod_version
     inputs.property "minecraft_version"    , rootProject.minecraft_version
     inputs.property "fabric_loader_version", rootProject.fabric_loader_version
     inputs.property "fabric_api_version"   , rootProject.fabric_api_version
@@ -41,7 +41,7 @@ processResources {
     inputs.property "mod_license"          , rootProject.mod_license
 
     filesMatching("fabric.mod.json") {
-        expand "version"              : inputs.version              .get()
+        expand "mod_version"          : inputs.mod_version          .get()
         expand "mod_id"               : inputs.mod_id               .get()
         expand "mod_name"             : inputs.mod_name             .get()
         expand "mod_description"      : inputs.mod_description      .get()

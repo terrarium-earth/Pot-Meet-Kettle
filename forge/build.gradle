@@ -32,7 +32,7 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version"              , project.version
+    inputs.property "mod_version"          , project.mod_version
     inputs.property "minecraft_version"    , rootProject.minecraft_version
     inputs.property "forge_loader_version" , rootProject.forge_loader_version.tokenize("-").get(1).tokenize("\\.").get(0)
     inputs.property "forge_api_version"    , rootProject.forge_api_version.tokenize("-").get(1).tokenize("\\.").get(0)
@@ -45,7 +45,7 @@ processResources {
     inputs.property "mod_license"          , rootProject.mod_license
 
     filesMatching("META-INF/mods.toml") {
-        expand "version"              : inputs.version              .get()
+        expand "mod_version"          : inputs.mod_version          .get()
         expand "minecraft_version"    : inputs.minecraft_version    .get()
         expand "forge_loader_version" : inputs.forge_loader_version .get()
         expand "forge_api_version"    : inputs.forge_api_version    .get()
