@@ -9,14 +9,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
-
 /**
  * A base block entity class that automates assigning the {@link RenderShape} as the model.
  * @author <a href="https://github.com/Brittank88">Brittank88</a>
  * @author <a href="https://github.com/ThatGravyBoat">ThatGravyBoat</a>
  */
-@ParametersAreNonnullByDefault
 public abstract class EntityBlockBase extends BaseEntityBlock {
 
     /**

@@ -5,10 +5,16 @@ dependencies {
 
     modImplementation "earth.terrarium:botarium-common-$rootProject.minecraft_version:$rootProject.botarium_version"
     modImplementation "earth.terrarium:botarium-common-$rootProject.minecraft_version:$rootProject.botarium_version"
+
+    modApi "com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.minecraft_version:$rootProject.resourcefullib_version"
 }
 
 architectury {
     common(rootProject.platforms.tokenize(","))
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/pot_meet_kettle.accesswidener")
 }
 
 publishing {

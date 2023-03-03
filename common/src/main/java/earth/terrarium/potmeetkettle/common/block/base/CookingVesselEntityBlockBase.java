@@ -2,8 +2,7 @@ package earth.terrarium.potmeetkettle.common.block.base;
 
 import earth.terrarium.botarium.api.fluid.FluidHooks;
 import earth.terrarium.botarium.api.item.SerializbleContainer;
-import earth.terrarium.potmeetkettle.common.blockentity.PotBlockEntity;
-import earth.terrarium.potmeetkettle.common.blockentity.base.CookingVesselBlockEntityBase;
+import earth.terrarium.potmeetkettle.common.blockentity.VesselBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -18,6 +17,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -27,39 +28,46 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * A base block entity class representing all cooking vessels.
  * @author <a href="https://github.com/Brittank88">Brittank88</a>
  * @author <a href="https://github.com/AlexNijjar">AlexNijjar</a>
+ * @author <a href="https://github.com/ThatGravyBoat">ThatGravyBoat</a>
  */
-@ParametersAreNonnullByDefault
-public abstract class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBase implements SimpleWaterloggedBlock {
+public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBase implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BooleanProperty.create("waterlogged");
 
-    protected CookingVesselEntityBlockBase(BlockBehaviour.Properties properties) {
+    private final Supplier<BlockEntityType<VesselBlockEntity>> type;
+
+    public CookingVesselEntityBlockBase(BlockBehaviour.Properties properties, Supplier<BlockEntityType<VesselBlockEntity>> type) {
         super(properties);
+        this.type = type;
         defaultBlockState().setValue(WATERLOGGED, false);
+    }
+
+    @Nullable @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        return type.get().create(pos, state);
     }
 
     @SuppressWarnings("deprecation")
     @Override public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 
-        if (!level.isClientSide && level.getBlockEntity(pos) instanceof CookingVesselBlockEntityBase potBlockEntity) {
+        if (!level.isClientSide && level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity) {
 
-            // Picking up the pot.
+            // Picking up the vessel.
             if (player.isShiftKeyDown()) {
                 ItemStack itemStack = new ItemStack(this.asItem());
-                itemStack.setTag(potBlockEntity.getUpdateTag());
+                itemStack.setTag(vesselBlockEntity.getUpdateTag());
                 player.getInventory().placeItemBackInInventory(itemStack);
 
             } else {
-                SerializbleContainer itemContainer = potBlockEntity.getContainer();
+                SerializbleContainer itemContainer = vesselBlockEntity.getContainer();
 
-                // Take items out of the pot.
+                // Take items out of the vessel.
                 if (player.getItemInHand(hand).isEmpty()) {
                     if (itemContainer.hasAnyMatching(Predicate.not(ItemStack::isEmpty))) {
                         for (int i = 0; i < itemContainer.getContainerSize(); i++) {
@@ -72,7 +80,7 @@ public abstract class CookingVesselEntityBlockBase extends HorizontalFacingEntit
                         }
                     }
 
-                // Placing items into the pot.
+                // Placing items into the vessel.
                 } else {
                     if (itemContainer.hasAnyMatching(ItemStack::isEmpty)) {
                         for (int i = 0; i < itemContainer.getContainerSize(); i++) {
@@ -94,8 +102,8 @@ public abstract class CookingVesselEntityBlockBase extends HorizontalFacingEntit
     @SuppressWarnings("deprecation")
     @Override public void onRemove(BlockState state1, Level level, BlockPos pos, BlockState state2, boolean moving) {
         if (!state1.is(state2.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof CookingVesselBlockEntityBase abstractPotBlockEntity) {
-                if (level instanceof ServerLevel) Containers.dropContents(level, pos, abstractPotBlockEntity);
+            if (level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity) {
+                if (level instanceof ServerLevel) Containers.dropContents(level, pos, vesselBlockEntity);
 
                 level.updateNeighbourForOutputSignal(pos, this);
             }
@@ -147,8 +155,8 @@ public abstract class CookingVesselEntityBlockBase extends HorizontalFacingEntit
      */
     @Override public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
         boolean canPlace = SimpleWaterloggedBlock.super.placeLiquid(level, pos, state, fluidState);
-        if (canPlace && level.getBlockEntity(pos) instanceof PotBlockEntity potBlockEntity)
-            potBlockEntity.getFluidContainer().insertFluid(FluidHooks.newFluidHolder(Fluids.WATER, FluidHooks.buckets(1), null), false);
+        if (canPlace && level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity)
+            vesselBlockEntity.getFluidContainer().insertFluid(FluidHooks.newFluidHolder(Fluids.WATER, FluidHooks.buckets(1), null), false);
         return canPlace;
     }
 

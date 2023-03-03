@@ -2,7 +2,7 @@ package earth.terrarium.potmeetkettle.common.registry;
 
 import earth.terrarium.botarium.api.registry.RegistryHolder;
 import earth.terrarium.potmeetkettle.PotMeetKettle;
-import earth.terrarium.potmeetkettle.common.block.PotBlock;
+import earth.terrarium.potmeetkettle.common.block.base.CookingVesselEntityBlockBase;
 import net.minecraft.core.Registry;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -10,47 +10,22 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Supplier;
 
+/**
+ * A class that holds all PMK blocks.
+ *
+ * @author <a href="https://github.com/Brittank88">Brittank88</a>
+ * @author <a href="https://github.com/ThatGravyBoat">ThatGravyBoat</a>
+ */
 public class PMKBlocks {
 
     public static final RegistryHolder<Block> BLOCKS = new RegistryHolder<>(Registry.BLOCK, PotMeetKettle.MOD_ID);
 
-    private PMKBlocks() {}
-
-    public static final Supplier<PotBlock> POT = BLOCKS.register("pot", () -> new PotBlock(
-            BlockBehaviour.Properties
-                    .copy(Blocks.IRON_BLOCK)
-                    .isRedstoneConductor((state, reader, pos) -> false))
-    );
-
-    public static final Supplier<PotBlock> PAN = BLOCKS.register("pan", () -> new PotBlock(
-            BlockBehaviour.Properties
-                    .copy(Blocks.IRON_BLOCK)
-                    .isRedstoneConductor((state, reader, pos) -> false))
-    );
-
-    public static final Supplier<PotBlock> WOK = BLOCKS.register("wok", () -> new PotBlock(
-            BlockBehaviour.Properties
-                    .copy(Blocks.IRON_BLOCK)
-                    .isRedstoneConductor((state, reader, pos) -> false))
-    );
-
-    protected class PMKBlockBuilder {
-        private BlockBehaviour.Properties properties;
-        private String name;
-        private Supplier<Block> supplier;
-
-        public PMKBlockBuilder(BlockBehaviour.Properties properties, String name) {
-            this.properties = properties;
-            this.name = name;
-        }
-
-        public PMKBlockBuilder setSupplier(Supplier<Block> supplier) {
-            this.supplier = supplier;
-            return this;
-        }
-
-        public Supplier<Block> build() {
-            return BLOCKS.register(name, supplier);
-        }
+    private PMKBlocks() {
     }
+
+    public static final BlockBehaviour.Properties BASE_VESSEL_PROPERTIES = BlockBehaviour.Properties.copy(Blocks.IRON_BLOCK).isRedstoneConductor((state, reader, pos) -> false);
+
+    public static final Supplier<CookingVesselEntityBlockBase> POT = BLOCKS.register("pot", () -> new CookingVesselEntityBlockBase(BASE_VESSEL_PROPERTIES, PMKBlockEntities.POT));
+    public static final Supplier<CookingVesselEntityBlockBase> PAN = BLOCKS.register("pan", () -> new CookingVesselEntityBlockBase(BASE_VESSEL_PROPERTIES, PMKBlockEntities.PAN));
+    public static final Supplier<CookingVesselEntityBlockBase> WOK = BLOCKS.register("wok", () -> new CookingVesselEntityBlockBase(BASE_VESSEL_PROPERTIES, PMKBlockEntities.WOK));
 }

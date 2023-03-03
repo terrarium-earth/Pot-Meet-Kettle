@@ -23,7 +23,7 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionFabric")) { transitive false }
 
     include modImplementation("earth.terrarium:botarium-fabric-$rootProject.minecraft_version:$rootProject.botarium_version")
-    include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.resourcefullib_version")
+    include modApi("com.teamresourceful.resourcefullib:resourcefullib-fabric-$rootProject.minecraft_version:$rootProject.resourcefullib_version")
 }
 
 processResources {
@@ -62,6 +62,7 @@ shadowJar {
 }
 
 remapJar {
+    injectAccessWidener = true
     inputFile.set shadowJar.archiveFile
     dependsOn shadowJar
     classifier null

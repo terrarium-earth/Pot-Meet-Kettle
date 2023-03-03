@@ -6,6 +6,13 @@ architectury {
     forge()
 }
 
+loom {
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+    forge {
+        extraAccessWideners.add loom.accessWidenerPath.get().asFile.name
+    }
+}
+
 configurations {
     common
     shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
@@ -21,7 +28,7 @@ dependencies {
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     include modImplementation("earth.terrarium:botarium-forge-$rootProject.minecraft_version:$rootProject.botarium_version")
-    modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.resourcefullib_version")
+    modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.minecraft_version:$rootProject.resourcefullib_version")
 }
 
 processResources {
