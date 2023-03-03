@@ -10,7 +10,7 @@ dependencies {
 }
 
 architectury {
-    common(rootProject.platforms.tokenize(","))
+    common(rootProject.platforms.tokenize(",") as String[])
 }
 
 loom {
@@ -19,8 +19,10 @@ loom {
 
 publishing {
     publications {
+        //noinspection GroovyAssignabilityCheck
         mavenCommon(MavenPublication) {
             artifactId = rootProject.archives_base_name
+            //noinspection GroovyAssignabilityCheck
             from components.java
         }
     }
