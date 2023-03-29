@@ -1,7 +1,7 @@
 package earth.terrarium.potmeetkettle.common.block.base;
 
 import earth.terrarium.botarium.api.fluid.FluidHooks;
-import earth.terrarium.botarium.api.item.SerializbleContainer;
+import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.potmeetkettle.common.blockentity.VesselBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,7 +18,6 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -26,10 +25,10 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  * A base block entity class representing all cooking vessels.
@@ -41,20 +40,20 @@ public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBas
 
     public static final BooleanProperty WATERLOGGED = BooleanProperty.create("waterlogged");
 
-    private final Supplier<BlockEntityType<VesselBlockEntity>> type;
-
-    public CookingVesselEntityBlockBase(BlockBehaviour.Properties properties, Supplier<BlockEntityType<VesselBlockEntity>> type) {
+    public CookingVesselEntityBlockBase(BlockBehaviour.Properties properties) {
         super(properties);
-        this.type = type;
-        defaultBlockState().setValue(WATERLOGGED, false);
+        registerDefaultState(
+                defaultBlockState()
+                        .setValue(WATERLOGGED, false)
+        );
     }
 
     @Nullable @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return type.get().create(pos, state);
+        return BLOCK_TO_ENTITY.apply(this).create(pos, state);
     }
 
     @SuppressWarnings("deprecation")
-    @Override public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+    @Override public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
 
         if (!level.isClientSide && level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity) {
 
@@ -65,7 +64,7 @@ public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBas
                 player.getInventory().placeItemBackInInventory(itemStack);
 
             } else {
-                SerializbleContainer itemContainer = vesselBlockEntity.getContainer();
+                SerializableContainer itemContainer = vesselBlockEntity.getContainer();
 
                 // Take items out of the vessel.
                 if (player.getItemInHand(hand).isEmpty()) {
@@ -132,7 +131,7 @@ public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBas
     }
 
     @SuppressWarnings("deprecation")
-    @Override public BlockState updateShape(BlockState state1, Direction direction, BlockState state2, LevelAccessor levelAccessor, BlockPos pos1, BlockPos pos2) {
+    @Override public @NotNull BlockState updateShape(BlockState state1, Direction direction, BlockState state2, LevelAccessor levelAccessor, BlockPos pos1, BlockPos pos2) {
         if (state1.getValue(WATERLOGGED)) levelAccessor.scheduleTick(pos1, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
         return super.updateShape(state1, direction, state2, levelAccessor, pos1, pos2);
     }
@@ -142,7 +141,7 @@ public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBas
      * @return The {@link FluidState} for this block.
      */
     @SuppressWarnings("deprecation")
-    @Override public FluidState getFluidState(BlockState state) {
+    @Override public @NotNull FluidState getFluidState(BlockState state) {
         return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
@@ -156,7 +155,7 @@ public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBas
     @Override public boolean placeLiquid(LevelAccessor level, BlockPos pos, BlockState state, FluidState fluidState) {
         boolean canPlace = SimpleWaterloggedBlock.super.placeLiquid(level, pos, state, fluidState);
         if (canPlace && level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity)
-            vesselBlockEntity.getFluidContainer().insertFluid(FluidHooks.newFluidHolder(Fluids.WATER, FluidHooks.buckets(1), null), false);
+            vesselBlockEntity.getFluidContainer().insertFluid(FluidHooks.newFluidHolder(Fluids.WATER, FluidHooks.buckets(1D), null), false);
         return canPlace;
     }
 

@@ -1,12 +1,18 @@
 package earth.terrarium.potmeetkettle.common.block.base;
 
+import com.teamresourceful.resourcefullib.common.caches.CacheableFunction;
+import com.teamresourceful.resourcefullib.common.registry.RegistryEntry;
+import earth.terrarium.potmeetkettle.common.registry.PMKBlockEntityTypes;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -26,7 +32,7 @@ public abstract class EntityBlockBase extends BaseEntityBlock {
      * @param blockState The block state.
      * @return The {@link RenderShape} for this block.
      */
-    @Override public RenderShape getRenderShape(BlockState blockState) { return RenderShape.MODEL; }
+    @Override public @NotNull RenderShape getRenderShape(BlockState blockState) { return RenderShape.MODEL; }
 
     /**
      * Creates a block entity ticker for this block entity.
@@ -49,4 +55,32 @@ public abstract class EntityBlockBase extends BaseEntityBlock {
      * @param <T> The type of block entity.
      */
     @FunctionalInterface public interface BlockEntityTickerSingleton<T extends BlockEntity> { void tick(T pBlockEntity); }
+
+    private static final CacheableFunction<Block, BlockEntityType<?>> BLOCK_TO_ENTITY = new CacheableFunction<>(block ->
+            PMKBlockEntityTypes.BLOCK_ENTITY_TYPES
+                    .getEntries()
+                    .stream()
+                    .map(RegistryEntry::get)
+                    .filter(type -> type.isValid(block.defaultBlockState()))
+                    .findFirst()
+                    .orElse(null)
+    );
+    private BlockEntityType<?> entity;
+
+    public BasicEntityBlock(Properties properties) {
+        super(properties);
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
+        if (entity == null) {
+            entity = BLOCK_TO_ENTITY.apply(state.getBlock());
+        }
+        return entity.create(pos, state);
+    }
+
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
 }
