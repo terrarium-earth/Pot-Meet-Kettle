@@ -1,31 +1,31 @@
 modLoader       = "javafml"
-loaderVersion   = "[${forge_loader_version},)"
-license         = "${mod_license}"
-issueTrackerURL = "${mod_issue_tracker_url}"
+loaderVersion   = "[r-forge_loader_version-r,)"
+license         = "r-mod_license-r"
+issueTrackerURL = "r-mod_issue_tracker_url-r"
 
 [[mods]]
-modId       = "${mod_id}"
-version     = "${mod_version}"
-displayName = "${mod_name}"
-displayURL  = "${mod_display_url}"
+modId       = "r-mod_id-r"
+version     = "r-mod_version-r"
+displayName = "r-mod_name-r"
+displayURL  = "r-mod_display_url-r"
 logoFile    = "icon.png"
-authors     = "${mod_authors}"
+authors     = "r-mod_authors-r"
 
 # The description text for the mod (multi line!) (#mandatory)
 description = '''
-${mod_description}
+r-mod_description-r
 '''
 
 [[dependencies.potmeetkettle]]
 modId        = "forge"
 mandatory    = true
-versionRange = "[${forge_api_version},)"
+versionRange = "[r-forge_api_version-r,)"
 ordering     = "NONE"
 side         = "BOTH"
 
 [[dependencies.potmeetkettle]]
 modId        = "minecraft"
 mandatory    = true
-versionRange = "[${minecraft_version},)"
+versionRange = "[r-minecraft_version-r,)"
 ordering     = "NONE"
 side         = "BOTH"

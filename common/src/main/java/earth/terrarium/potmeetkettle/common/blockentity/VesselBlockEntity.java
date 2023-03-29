@@ -2,9 +2,8 @@ package earth.terrarium.potmeetkettle.common.blockentity;
 
 import earth.terrarium.botarium.api.fluid.FluidHoldingBlock;
 import earth.terrarium.botarium.api.fluid.SimpleUpdatingFluidContainer;
-import earth.terrarium.botarium.api.fluid.UpdatingFluidContainer;
 import earth.terrarium.botarium.api.item.ItemContainerBlock;
-import earth.terrarium.botarium.api.item.SerializbleContainer;
+import earth.terrarium.botarium.api.item.SerializableContainer;
 import earth.terrarium.botarium.api.item.SimpleItemContainer;
 import earth.terrarium.potmeetkettle.common.registry.ExtendedBlockEntityType;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -48,8 +47,8 @@ public class VesselBlockEntity extends BaseContainerBlockEntity implements World
     }
 
     // Container getters.
-    @Override public UpdatingFluidContainer getFluidContainer() { return fluidContainer; }
-    @Override public SerializbleContainer getContainer() { return itemContainer; }
+    @Override public SimpleUpdatingFluidContainer getFluidContainer() { return fluidContainer; }
+    @Override public SerializableContainer getContainer() { return itemContainer; }
 
     @Override public void update() { setChanged(); }
 

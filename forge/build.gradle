@@ -27,30 +27,36 @@ dependencies {
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
-    include modImplementation("earth.terrarium:botarium-forge-$rootProject.minecraft_version:$rootProject.botarium_version")
-    modApi("com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.minecraft_version:$rootProject.resourcefullib_version")
+    modApi "earth.terrarium:botarium-forge-$rootProject.minecraft_version:$rootProject.botarium_version"
+    modApi "com.teamresourceful.resourcefullib:resourcefullib-forge-$rootProject.minecraft_version:$rootProject.resourcefullib_version"
 }
 
 processResources {
 
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     def propertyMap = [
-        "mod_version"          : mod_version,
-        "minecraft_version"    : minecraft_version,
-        "forge_loader_version" : forge_loader_version,
-        "forge_api_version"    : forge_api_version,
-        "mod_id"               : mod_id,
-        "mod_name"             : mod_name,
-        "mod_description"      : mod_description,
-        "mod_authors"          : mod_authors.tokenize(/, */).join(', '),
-        "mod_display_url"      : mod_display_url,
-        "mod_issue_tracker_url": mod_issue_tracker_url,
-        "mod_license"          : mod_license
+            "mod_version"          : mod_version,
+            "minecraft_version"    : minecraft_version,
+            "forge_loader_version" : forge_loader_version,
+            "forge_api_version"    : forge_api_version,
+            "mod_id"               : mod_id,
+            "mod_name"             : mod_name,
+            "mod_description"      : mod_description,
+            "mod_authors"          : mod_authors.tokenize(/, */).join(', '),
+            "mod_display_url"      : mod_display_url,
+            "mod_issue_tracker_url": mod_issue_tracker_url,
+            "mod_repo_url"         : mod_repo_url,
+            "mod_license"          : mod_license
     ]
 
     propertyMap.forEach { k, v -> inputs.property k, v }
 
-    filesMatching("META-INF/mods.toml") {
-        expand propertyMap
+    filesMatching("mods.toml") {
+        filter { String line ->
+            propertyMap.forEach { k, v -> line = line.replaceAll("r-$k-r", v) }
+            return line
+        }
     }
 }
 

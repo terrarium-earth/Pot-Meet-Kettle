@@ -12,20 +12,20 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
 /**
- * An extension of {@link EntityBlockBase} that adds a {@link HorizontalDirectionalBlock horizontal facing} property.
+ * An extension of {@link BasicEntityBlock} that adds a {@link HorizontalDirectionalBlock horizontal facing} property.
  * @author <a href="https://github.com/Brittank88">Brittank88</a>
  * @author <a href="https://github.com/ThatGravyBoat">ThatGravyBoat</a>
  */
-public abstract class HorizontalFacingEntityBlockBase extends EntityBlockBase {
+public abstract class HorizontalFacingBasicEntityBlock extends BasicEntityBlock {
 
     /** A directional property defining which way the block is currently facing. */
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 
     /**
-     * Creates a new {@link HorizontalFacingEntityBlockBase}.
+     * Creates a new {@link HorizontalFacingBasicEntityBlock}.
      * @param properties The block properties.
      */
-    public HorizontalFacingEntityBlockBase(BlockBehaviour.Properties properties) {
+    public HorizontalFacingBasicEntityBlock(BlockBehaviour.Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(FACING, Direction.NORTH));
     }

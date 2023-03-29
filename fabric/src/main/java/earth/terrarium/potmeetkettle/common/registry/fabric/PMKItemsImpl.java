@@ -1,4 +1,4 @@
-package earth.terrarium.potmeetkettle.common.fabric;
+package earth.terrarium.potmeetkettle.common.registry.fabric;
 
 import earth.terrarium.potmeetkettle.PotMeetKettle;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;

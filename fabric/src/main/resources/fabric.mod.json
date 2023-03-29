@@ -1,26 +1,26 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
-  "version": "${mod_version}",
-  "name": "${mod_name}",
-  "description": "${mod_description}",
-  "authors": mod_authors,
+  "id": "r-mod_id-r",
+  "version": "r-mod_version-r",
+  "name": "r-mod_name-r",
+  "description": "r-mod_description-r",
+  "authors": ["r-mod_authors-r"],
   "contact": {
-    "website": "${mod_display_url}",
-    "repo": "${mod_repo_url}",
-    "issues": "${mod_issue_tracker_url}"
+    "website": "r-mod_display_url-r",
+    "repo": "r-mod_repo_url-r",
+    "issues": "r-mod_issue_tracker_url-r"
   },
-  "license": "${mod_license}",
+  "license": "r-mod_license-r",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "earth.terrarium.potmeetkettle.fabric.PotMeetKettleFabric"
+      "earth.terrarium.potmeetkettle.common.registry.fabric.PotMeetKettleFabric"
     ]
   },
   "depends": {
-    "fabric": ">=${fabric_api_version}",
-    "fabricloader": ">=${fabric_loader_version}",
-    "minecraft": ">=${minecraft_version}"
+    "fabric": ">=r-fabric_api_version-r",
+    "fabricloader": ">=r-fabric_loader_version-r",
+    "minecraft": ">=r-minecraft_version-r"
   }
 }

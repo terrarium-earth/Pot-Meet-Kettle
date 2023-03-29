@@ -1,4 +1,4 @@
-package earth.terrarium.potmeetkettle.common.forge.registry;
+package earth.terrarium.potmeetkettle.common.registry.forge;
 
 import earth.terrarium.potmeetkettle.PotMeetKettle;
 import net.minecraft.world.item.CreativeModeTab;
@@ -14,5 +14,5 @@ public class PMKItemsImpl {
                 return icon.get();
             }
         };
-    }
+    }   
 }

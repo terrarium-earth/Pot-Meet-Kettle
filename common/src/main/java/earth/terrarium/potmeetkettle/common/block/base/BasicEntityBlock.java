@@ -17,44 +17,11 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A base block entity class that automates assigning the {@link RenderShape} as the model.
+ *
  * @author <a href="https://github.com/Brittank88">Brittank88</a>
  * @author <a href="https://github.com/ThatGravyBoat">ThatGravyBoat</a>
  */
-public abstract class EntityBlockBase extends BaseEntityBlock {
-
-    /**
-     * Creates a new {@link EntityBlockBase}.
-     * @param properties The block properties.
-     */
-    public EntityBlockBase(BlockBehaviour.Properties properties) { super(properties); }
-
-    /**
-     * @param blockState The block state.
-     * @return The {@link RenderShape} for this block.
-     */
-    @Override public @NotNull RenderShape getRenderShape(BlockState blockState) { return RenderShape.MODEL; }
-
-    /**
-     * Creates a block entity ticker for this block entity.
-     * @param <E>       The block entity type.
-     * @param <A>       The block entity type to check.
-     * @param typeIn    The block entity type.
-     * @param typeCheck The block entity type to check.
-     * @param ticker    The block entity ticker.
-     * @return The block entity ticker.
-     */
-    @SuppressWarnings("unchecked")
-    @Nullable protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
-            BlockEntityType<A> typeIn,
-            BlockEntityType<E> typeCheck,
-            BlockEntityTickerSingleton<? super E> ticker
-    ) { return typeIn == typeCheck ? (pLevel, pPos, pState, pBlockEntity) -> ticker.tick((E) pBlockEntity) : null; }
-
-    /**
-     * A functional interface for ticking a block entity.
-     * @param <T> The type of block entity.
-     */
-    @FunctionalInterface public interface BlockEntityTickerSingleton<T extends BlockEntity> { void tick(T pBlockEntity); }
+public abstract class BasicEntityBlock extends BaseEntityBlock {
 
     private static final CacheableFunction<Block, BlockEntityType<?>> BLOCK_TO_ENTITY = new CacheableFunction<>(block ->
             PMKBlockEntityTypes.BLOCK_ENTITY_TYPES
@@ -67,20 +34,64 @@ public abstract class EntityBlockBase extends BaseEntityBlock {
     );
     private BlockEntityType<?> entity;
 
-    public BasicEntityBlock(Properties properties) {
+    /**
+     * Creates a new {@link BasicEntityBlock}.
+     *
+     * @param properties The block properties.
+     */
+    public BasicEntityBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
 
+    /**
+     * Creates a new block entity.
+     *
+     * @param pos   The block position.
+     * @param state The block state.
+     *
+     * @return The block entity.
+     */
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        if (entity == null) {
-            entity = BLOCK_TO_ENTITY.apply(state.getBlock());
-        }
+        if (entity == null) entity = BLOCK_TO_ENTITY.apply(state.getBlock());
         return entity.create(pos, state);
     }
 
-    @Override
-    public RenderShape getRenderShape(BlockState state) {
+    /**
+     * @param blockState The block state.
+     *
+     * @return The {@link RenderShape} for this block.
+     */
+    @Override public @NotNull RenderShape getRenderShape(BlockState blockState) {
         return RenderShape.MODEL;
+    }
+
+    /**
+     * Creates a block entity ticker for this block entity.
+     *
+     * @param <E>       The block entity type.
+     * @param <A>       The block entity type to check.
+     * @param typeIn    The block entity type.
+     * @param typeCheck The block entity type to check.
+     * @param ticker    The block entity ticker.
+     *
+     * @return The block entity ticker.
+     */
+    @SuppressWarnings("unchecked")
+    @Nullable protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(
+            BlockEntityType<A> typeIn,
+            BlockEntityType<E> typeCheck,
+            BlockEntityTickerSingleton<? super E> ticker
+    ) {
+        return typeIn == typeCheck ? (pLevel, pPos, pState, pBlockEntity) -> ticker.tick((E) pBlockEntity) : null;
+    }
+
+    /**
+     * A functional interface for ticking a block entity.
+     *
+     * @param <T> The type of block entity.
+     */
+    @FunctionalInterface public interface BlockEntityTickerSingleton<T extends BlockEntity> {
+        void tick(T pBlockEntity);
     }
 }

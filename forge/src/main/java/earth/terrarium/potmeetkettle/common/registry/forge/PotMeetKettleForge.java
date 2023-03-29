@@ -1,4 +1,4 @@
-package earth.terrarium.potmeetkettle.common.forge.registry;
+package earth.terrarium.potmeetkettle.common.registry.forge;
 
 import earth.terrarium.potmeetkettle.PotMeetKettle;
 import net.minecraftforge.fml.common.Mod;

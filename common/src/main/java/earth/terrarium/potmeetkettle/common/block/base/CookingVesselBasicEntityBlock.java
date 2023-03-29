@@ -17,7 +17,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -36,20 +35,16 @@ import java.util.function.Predicate;
  * @author <a href="https://github.com/AlexNijjar">AlexNijjar</a>
  * @author <a href="https://github.com/ThatGravyBoat">ThatGravyBoat</a>
  */
-public class CookingVesselEntityBlockBase extends HorizontalFacingEntityBlockBase implements SimpleWaterloggedBlock {
+public class CookingVesselBasicEntityBlock extends HorizontalFacingBasicEntityBlock implements SimpleWaterloggedBlock {
 
     public static final BooleanProperty WATERLOGGED = BooleanProperty.create("waterlogged");
 
-    public CookingVesselEntityBlockBase(BlockBehaviour.Properties properties) {
+    public CookingVesselBasicEntityBlock(BlockBehaviour.Properties properties) {
         super(properties);
         registerDefaultState(
                 defaultBlockState()
                         .setValue(WATERLOGGED, false)
         );
-    }
-
-    @Nullable @Override public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return BLOCK_TO_ENTITY.apply(this).create(pos, state);
     }
 
     @SuppressWarnings("deprecation")

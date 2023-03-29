@@ -1,7 +1,7 @@
 plugins {
     id "architectury-plugin" version "3.4-SNAPSHOT"
     id "dev.architectury.loom" version "1.0-SNAPSHOT" apply false
-    id 'signing'
+    id "signing"
 }
 
 architectury {
@@ -48,6 +48,11 @@ allprojects {
             // location of the maven that hosts Mine and Team Resourceful's files
             name = "Resourceful Bees Maven"
             url = "https://nexus.resourcefulbees.com/repository/maven-public/"
+        }
+
+        maven {
+            url "https://cursemaven.com"
+            content { includeGroup "curse.maven" }
         }
     }
 

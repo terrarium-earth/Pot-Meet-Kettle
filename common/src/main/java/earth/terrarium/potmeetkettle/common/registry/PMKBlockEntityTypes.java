@@ -1,6 +1,7 @@
 package earth.terrarium.potmeetkettle.common.registry;
 
-import earth.terrarium.botarium.api.registry.RegistryHolder;
+import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries;
+import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry;
 import earth.terrarium.potmeetkettle.PotMeetKettle;
 import earth.terrarium.potmeetkettle.common.blockentity.VesselBlockEntity;
 import earth.terrarium.potmeetkettle.common.util.Lazy;
@@ -10,15 +11,14 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 
 import java.util.function.Supplier;
 
-public class PMKBlockEntities {
+public class PMKBlockEntityTypes {
+    public static final ResourcefulRegistry<BlockEntityType<?>> BLOCK_ENTITY_TYPES = ResourcefulRegistries.create(Registry.BLOCK_ENTITY_TYPE, PotMeetKettle.MOD_ID);
 
-    public static final RegistryHolder<BlockEntityType<?>> BLOCK_ENTITIES = new RegistryHolder<>(Registry.BLOCK_ENTITY_TYPE, PotMeetKettle.MOD_ID);
-
-    private PMKBlockEntities() {
+    private PMKBlockEntityTypes() {
     }
 
     public static Lazy<BlockEntityType<VesselBlockEntity>> lazy(String id, ExtendedBlockEntityType.ExtendedBlockEntityFactory<VesselBlockEntity> factory, Supplier<? extends Block> supplier) {
-        return Lazy.of(BLOCK_ENTITIES.register(id, () -> new ExtendedBlockEntityType<>(factory, supplier)));
+        return Lazy.of(BLOCK_ENTITY_TYPES.register(id, () -> new ExtendedBlockEntityType<>(factory, supplier)));
     }
 
     public static final Lazy<BlockEntityType<VesselBlockEntity>> POT = lazy("pot", VesselBlockEntity.factory(true, 4, 1), PMKBlocks.POT);
