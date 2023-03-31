@@ -45,7 +45,7 @@ processResources {
         "mod_license"          : mod_license
     ]
 
-    propertyMap.forEach {k, v -> inputs.property k, v }
+    propertyMap.forEach { k, v -> inputs.property k, v }
 
     filesMatching("fabric.mod.json") {
         filter { String line ->

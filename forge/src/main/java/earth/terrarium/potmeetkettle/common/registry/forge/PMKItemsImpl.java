@@ -14,5 +14,5 @@ public class PMKItemsImpl {
                 return icon.get();
             }
         };
-    }   
+    }
 }
