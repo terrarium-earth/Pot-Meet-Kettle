@@ -1,14 +1,15 @@
 package earth.terrarium.potmeetkettle.common.block.base;
 
-import earth.terrarium.botarium.api.fluid.FluidHooks;
-import earth.terrarium.botarium.api.item.SerializableContainer;
+import earth.terrarium.botarium.common.fluid.utils.FluidHooks;
+import earth.terrarium.botarium.common.item.SerializableContainer;
 import earth.terrarium.potmeetkettle.common.blockentity.VesselBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
@@ -17,16 +18,20 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SimpleWaterloggedBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 /**
@@ -54,12 +59,12 @@ public class CookingVesselBasicEntityBlock extends HorizontalFacingBasicEntityBl
 
             // Picking up the vessel.
             if (player.isShiftKeyDown()) {
-                ItemStack itemStack = new ItemStack(this.asItem());
-                itemStack.setTag(vesselBlockEntity.getUpdateTag());
-                player.getInventory().placeItemBackInInventory(itemStack);
-
+                getDrops(state, (ServerLevel) level, pos, vesselBlockEntity).forEach(player.getInventory()::placeItemBackInInventory);
+                level.removeBlock(pos, false);
             } else {
                 SerializableContainer itemContainer = vesselBlockEntity.getContainer();
+
+                // TODO: Rework this logic.
 
                 // Take items out of the vessel.
                 if (player.getItemInHand(hand).isEmpty()) {
@@ -67,8 +72,9 @@ public class CookingVesselBasicEntityBlock extends HorizontalFacingBasicEntityBl
                         for (int i = 0; i < itemContainer.getContainerSize(); i++) {
                             ItemStack itemStack = itemContainer.getItem(i);
                             if (!itemStack.isEmpty()) {
-                                player.setItemInHand(hand, itemStack);
-                                itemContainer.getItem(i).shrink(1);
+                                player.setItemInHand(hand, itemContainer.getItem(i).copyAndClear());
+                                vesselBlockEntity.setChanged();
+                                level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
                                 break;
                             }
                         }
@@ -80,8 +86,9 @@ public class CookingVesselBasicEntityBlock extends HorizontalFacingBasicEntityBl
                         for (int i = 0; i < itemContainer.getContainerSize(); i++) {
                             ItemStack itemStack = itemContainer.getItem(i);
                             if (itemStack.isEmpty()) {
-                                itemContainer.setItem(i, player.getItemInHand(hand));
-                                player.getItemInHand(hand).shrink(1);
+                                itemContainer.setItem(i, player.getItemInHand(hand).copyAndClear());
+                                vesselBlockEntity.setChanged();
+                                level.sendBlockUpdated(pos, state, state, Block.UPDATE_ALL);
                                 break;
                             }
                         }
@@ -93,17 +100,20 @@ public class CookingVesselBasicEntityBlock extends HorizontalFacingBasicEntityBl
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    @SuppressWarnings("deprecation")
-    @Override public void onRemove(BlockState state1, Level level, BlockPos pos, BlockState state2, boolean moving) {
-        if (!state1.is(state2.getBlock())) {
-            if (level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity) {
-                if (level instanceof ServerLevel) Containers.dropContents(level, pos, vesselBlockEntity);
+    @Override public List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
+        BlockEntity blockEntity = params.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (blockEntity instanceof VesselBlockEntity vesselBlockEntity) {
+            CompoundTag tag = new CompoundTag();
+            tag.put("Items", vesselBlockEntity.getContainer().serialize(new CompoundTag()));
+            tag.put("Fluids", vesselBlockEntity.getFluidContainer().serialize(new CompoundTag()));
 
-                level.updateNeighbourForOutputSignal(pos, this);
-            }
+            ItemStack itemStack = new ItemStack(this.asItem());
+            itemStack.setTag(tag);
 
-            super.onRemove(state1, level, pos, state2, moving);
+            return List.of(itemStack);
         }
+
+        return super.getDrops(state, params);
     }
 
     @SuppressWarnings("deprecation")
@@ -161,5 +171,17 @@ public class CookingVesselBasicEntityBlock extends HorizontalFacingBasicEntityBl
     @Override protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(WATERLOGGED);
+    }
+
+    @Override public void setPlacedBy(Level level, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(level, pos, state, placer, stack);
+
+        if (level.getBlockEntity(pos) instanceof VesselBlockEntity vesselBlockEntity) {
+            CompoundTag tag = stack.getTag();
+            if (tag != null) {
+                vesselBlockEntity.getContainer().deserialize(tag.getCompound("Items"));
+                vesselBlockEntity.getFluidContainer().deserialize(tag.getCompound("Fluids"));
+            }
+        }
     }
 }

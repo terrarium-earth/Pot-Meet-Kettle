@@ -4,7 +4,7 @@ import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistries;
 import com.teamresourceful.resourcefullib.common.registry.ResourcefulRegistry;
 import earth.terrarium.potmeetkettle.PotMeetKettle;
 import earth.terrarium.potmeetkettle.common.block.base.CookingVesselBasicEntityBlock;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  */
 public class PMKBlocks {
 
-    public static final ResourcefulRegistry<Block> BLOCKS = ResourcefulRegistries.create(Registry.BLOCK, PotMeetKettle.MOD_ID);
+    public static final ResourcefulRegistry<Block> BLOCKS = ResourcefulRegistries.create(BuiltInRegistries.BLOCK, PotMeetKettle.MOD_ID);
 
     private PMKBlocks() {
     }
